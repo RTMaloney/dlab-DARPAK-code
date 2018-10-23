@@ -17,7 +17,6 @@ SubjNos = 4:25; % only subjects K4-K25 are analysed in the final regression: n=2
 %%
 % Set up containers to hold the data, sets of cell arrays filled with NaNs
 % Remember we have subject (22) * block (7) per condition * trial (up to 25)
-
 entropy.instructive = cell(1,n);
 entropy.instructive(:) = {nan(7,25)};
 entropy.monetary = cell(1,n);
@@ -119,33 +118,28 @@ MI.mean_instructive = cat(1, MI.mean_instructive{:}); %Concatenate across subjec
 MI.mean_monetary = cellfun(@nanmean, MI.monetary, 'UniformOutput', false);
 MI.mean_monetary = cat(1, MI.mean_monetary{:});
 
-%%
+% Save these structs of data as a mat file
+save([base_data_dir, '\DARKPAK_proc_model_results.mat'], 'MI', 'entropy'); %, '-v7.3')
+
+%% The below can be used to extract the behavioural performance data on the task.
 % Find out how many trials in each block
-for ii = 1:length(event.rewardHistory)
-    x(ii) = size(event.rewardHistory{ii},2)
-end
-
-
-% Pull out chosen contrasts and compute absolute difference between
-% them and the target contrasts.
-All_alphas = nan(size(trialLog));
-Abs_contr_diff = nan(size(trialLog));
-
-for ii = 1:size(trialLog,1) %loop across blocks
-    
-    for jj = 1:size(trialLog,2) %loop across trials
-        
-        if ~isempty(trialLog(ii,jj).alpha) %If there's data for this trial
-            All_alphas(ii,jj) = trialLog(ii,jj).alpha;
-            
-            % Work out abs difference between the TARGET and CHOSEN contrast:
-            Abs_contr_diff(ii,jj) = abs(event.rewardAlpha(ii) - trialLog(ii,jj).alpha) ;
-            
-        end
-    end
-end
-
-%work out difference between reward and chosen:
+% for ii = 1:length(event.rewardHistory)
+%     x(ii) = size(event.rewardHistory{ii},2)
+% end
+% 
+% % Pull out chosen contrasts and compute absolute difference between
+% % them and the target contrasts.
+% All_alphas = nan(size(trialLog));
+% Abs_contr_diff = nan(size(trialLog));
+% for ii = 1:size(trialLog,1) %loop across blocks
+%     for jj = 1:size(trialLog,2) %loop across trials
+%         if ~isempty(trialLog(ii,jj).alpha) %If there's data for this trial
+%             All_alphas(ii,jj) = trialLog(ii,jj).alpha;
+%             % Work out abs difference between the TARGET and CHOSEN contrast:
+%             Abs_contr_diff(ii,jj) = abs(event.rewardAlpha(ii) - trialLog(ii,jj).alpha) ;
+%         end
+%     end
+% end
 
 
 
