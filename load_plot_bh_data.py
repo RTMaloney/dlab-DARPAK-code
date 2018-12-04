@@ -35,10 +35,21 @@ instr_trials_se = bh_data.iloc[24,26:41]
 #%%
 # Now make the line plots in a new figure
 fig = plt.figure()
+
+mon_line = plt.plot(np.arange(1,16), rewrd_trials*100, color = 'r')
+ins_line = plt.plot(np.arange(1,16), instr_trials*100, color = 'k')
+
+# then label the relevant parameters, namely the lines, accordingly
+plt.setp(mon_line,label='Monetary')
+plt.setp(ins_line,label='Instructive')
+
+# Now we can insert this legend
+plt.legend()
+
 # Convert performance data into a percentage contrast when plotting
-plt.errorbar(np.arange(1,16), rewrd_trials*100, yerr = rewrd_trials_se*100, 
+mon_line, bars, caps = plt.errorbar(np.arange(1,16), rewrd_trials*100, yerr = rewrd_trials_se*100, 
              color = 'r')
-plt.errorbar(np.arange(1,16), instr_trials*100, yerr = instr_trials_se*100,
+ins_line, bars, caps = plt.errorbar(np.arange(1,16), instr_trials*100, yerr = instr_trials_se*100,
              color = 'k')
 
 # Adjust the axis limits
@@ -48,6 +59,8 @@ plt.ylim(0,30)
 # Adjust the tick labels on the x axis
 plt.xticks(np.arange(0,16, 5))
 
+plt.xlabel('Trial Number')
+plt.ylabel('Choice error (%)')
 
 #%%  ***** Now load and plot the initial modelling results. *****
 #
