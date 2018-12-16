@@ -75,23 +75,30 @@ errorbar(entropy_mean_monet(1:15), entropy_SE_monet(1:15), 'r', 'CapSize', 0, 'L
 hold on
 errorbar(entropy_mean_instr(1:15), entropy_SE_instr(1:15),'k', 'CapSize', 0, 'LineWidth', 2)
 
+% Adjust the axis limits
+xlim([0 16])
+ylim([4 8])
+xlabel('Trial Number')
+ylabel('Belief uncertainty (a.u.)')
 
-# Now we can insert this legend; only need 1 for the 2 subplots:
-ax[0].legend()
+% Final formatting:
+set(gca, 'box', 'off', 'TickDir', 'out', ...
+    'FontSize', 14)
 
-# Plot mutual information
-ax[1].errorbar(np.arange(1,16), MI_mean_monet[0:15], yerr = MI_SE_monet[0:15], 
-             color = 'r')
-ax[1].errorbar(np.arange(1,16), MI_mean_instr[0:15], yerr = MI_SE_instr[0:15], 
-             color = 'k')
+%%
+% Now plot mutual information (belief update magnitude)
+figure(3)
+errorbar(MI_mean_monet(1:15), MI_SE_monet(1:15), 'r', 'CapSize', 0, 'LineWidth', 2)
+hold on
+errorbar(MI_mean_instr(1:15), MI_SE_instr(1:15),'k', 'CapSize', 0, 'LineWidth', 2)
 
-ax[1].set_ylim([0,0.45])
-ax[1].set_xlim([0,16])
+% Adjust the axis limits
+xlim([0 16])
+ylim([0 0.5])
+xlabel('Trial Number')
+ylabel('Belief update magnitude (a.u.)')
 
-ax[0].set_xlim([0,16])
-
-# Put in labels for the axes
-ax[1].set_xlabel('Trial Number')
-ax[0].set_ylabel('Belief Uncertainty (a.u.)')
-ax[1].set_ylabel('Belief Update Size (a.u.)')
+% Final formatting:
+set(gca, 'box', 'off', 'TickDir', 'out', ...
+    'FontSize', 14)
 
