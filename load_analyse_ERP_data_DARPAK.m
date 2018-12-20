@@ -45,7 +45,7 @@ for ii=1:num_bins       % loop across BINS
 end
 
 % Just plot overall instructive/monetary for the 5 electrodes (bins 5 and 6):
-figure(1)
+figure
 plot_mean_ampl = [P3a_ampl_means(5,:); P3a_ampl_means(6,:)]';
 plot_SEs_ampl = [P3a_ampl_SEs(5,:); P3a_ampl_SEs(6,:)]';
 
@@ -80,7 +80,7 @@ title('Mean P3a amplitudes, 250-550 ms post-feedback')
 legend('Instructive', 'Monetary') % put in legend for just the data
 
 %% Now plot P3a peak amplitudes split according to belief update size
-figure(2)
+figure
 plot_mean_ampl = [P3a_ampl_means(1,:); P3a_ampl_means(2,:); P3a_ampl_means(3,:); P3a_ampl_means(4,:)]';
 plot_SEs_ampl = [P3a_ampl_SEs(1,:); P3a_ampl_SEs(2,:); P3a_ampl_SEs(3,:); P3a_ampl_SEs(4,:)]';
 
