@@ -27,9 +27,26 @@ MI.instructive(:) = {nan(7,25)};
 MI.monetary = cell(1,n);
 MI.monetary(:) = {nan(7,25)};
 
+% container for behavioural responses:
+% these are in absolute contrast difference in the chosen from the target contrast.
+behav.instructive = cell(1,n);
+behav.instructive(:) = {nan(7,25)};
+behav.monetary = cell(1,n);
+behav.monetary(:) = {nan(7,25)};
+
+% Set up container for reward values.
+% for the monetary condition, these are in dollers and are no greater than
+% 0.25. For the instructive condition, these are in %contrast and are
+% no greater than 15. Of course, no actual reward is given in the instructive condition,
+% just information.
+reward.instructive = cell(1,n);
+reward.instructive(:) = {nan(7,25)};
+reward.monetary = cell(1,n);
+reward.monetary(:) = {nan(7,25)};
+
 % we want to average across blocks for each subject
 % and then across subjects
-% so we have an indication of mean entropy across trials
+% so we have an indication of mean values across trials
 
 %%
 % Go through each SUBJECT, load and process their data in turn.
@@ -40,7 +57,7 @@ for S = 1:n
     % first, work out whether first set of 7 blocks was instructive (0) or monetary (1):
     reward_block_first(S) = params.rewardFirst;
     
-    % Now load the modelling results for current subject.
+    % Now load the modelling results for current subject.[
     % Load block labels:
     load (fullfile(base_data_dir, 'regression_labels', ['K', num2str(SubjNos(S))], 'BlockLabels.mat'))
     % Load trial labels:
@@ -62,8 +79,12 @@ for S = 1:n
     % Now we should have the block and trial labels loaded,
     % as well as the entropy and MI.
     
-    % Pull out the monetary values based on the trial and block labels
-    % Looping across blocks and trials
+    % Pull out the monetary values based on the trial and block labels.
+    % Also pull out the behavioural data: absolute differences between chosen and target contrast
+    % Looping across blocks and trials.
+    % NOTE: rarely, sometimes 2 reward values are given for a single trial.
+    % This must be a bug of some sort. To deal with this, we just take the first of
+    % these values ie trialLog(blk,trial).reward(1);
     for blk = 1:7 % Blocks 1 to 7 first:
         for trial = 1:25
             idx =  find (urBlockLabels==blk & urTrialLabels == trial);
@@ -72,10 +93,14 @@ for S = 1:n
                 if reward_block_first(S)
                     entropy.monetary{S}(blk,trial) = urEntropyLabels(idx);
                     MI.monetary{S}(blk,trial) = urInfoLabels(idx);
+                    behav.monetary{S}(blk,trial) = abs(event.rewardAlpha(blk) - trialLog(blk,trial).alpha);
+                    reward.monetary{S}(blk,trial) = trialLog(blk,trial).reward(1);
                     % Otherwise if block 1 to 7 are the instructive blocks:
                 else
                     entropy.instructive{S}(blk,trial) = urEntropyLabels(idx);
                     MI.instructive{S}(blk,trial) = urInfoLabels(idx);
+                    behav.instructive{S}(blk,trial) = abs(event.rewardAlpha(blk) - trialLog(blk,trial).alpha);
+                    reward.instructive{S}(blk,trial) = trialLog(blk,trial).reward(1);
                 end
             end
         end
@@ -93,18 +118,23 @@ for S = 1:n
                 if reward_block_first(S)
                     entropy.instructive{S}(blk,trial) = urEntropyLabels(idx);
                     MI.instructive{S}(blk,trial) = urInfoLabels(idx);
+                    behav.instructive{S}(blk,trial) = abs(event.rewardAlpha(blk+7) - trialLog(blk+7,trial).alpha);
+                    reward.instructive{S}(blk,trial) = trialLog(blk+7,trial).reward(1);
                     %Otherwise these latter blocks will be for monetary
                 else
                     entropy.monetary{S}(blk,trial) = urEntropyLabels(idx);
                     MI.monetary{S}(blk,trial) = urInfoLabels(idx);
+                    behav.monetary{S}(blk,trial) = abs(event.rewardAlpha(blk+7) - trialLog(blk+7,trial).alpha);
+                    reward.monetary{S}(blk,trial) = trialLog(blk+7,trial).reward(1);
                 end
             end
-        end
-    end
-end % End of loop across SUBJECTS.
+        end     % End of loop across TRIALS
+    end         % End of loop across BLOCKS
+end             % End of loop across SUBJECTS.
 
-% We now should have the modelling results pulled out separately for MI and entropy, 
+% We now should have the modelling results pulled out separately for MI and entropy,
 % with a separate cell for each subject, 7 rows per condition with (max of) 25 trials.
+% as well as the overall behavioural performance, and the reward values (or info) given.
 
 %%
 % Compute mean values across BLOCKS for each subject
@@ -118,21 +148,31 @@ MI.mean_instructive = cat(1, MI.mean_instructive{:}); %Concatenate across subjec
 MI.mean_monetary = cellfun(@nanmean, MI.monetary, 'UniformOutput', false);
 MI.mean_monetary = cat(1, MI.mean_monetary{:});
 
+behav.mean_instructive = cellfun(@nanmean, behav.instructive, 'UniformOutput', false);
+behav.mean_instructive = cat(1, behav.mean_instructive{:}); %Concatenate across subjects into single matrix
+behav.mean_monetary = cellfun(@nanmean, behav.monetary, 'UniformOutput', false);
+behav.mean_monetary = cat(1, behav.mean_monetary{:});
+
+reward.mean_instructive = cellfun(@nanmean, reward.instructive, 'UniformOutput', false);
+reward.mean_instructive = cat(1, reward.mean_instructive{:}); %Concatenate across subjects into single matrix
+reward.mean_monetary = cellfun(@nanmean, reward.monetary, 'UniformOutput', false);
+reward.mean_monetary = cat(1, reward.mean_monetary{:});
+
 % Save these structs of data as a mat file
-save([base_data_dir, '\DARKPAK_proc_model_results.mat'], 'MI', 'entropy'); %, '-v7.3')
+save([base_data_dir, '\DARKPAK_proc_model_results.mat'], 'MI', 'entropy', 'behav', 'reward'); %, '-v7.3')
 
 %% The below can be used to extract the behavioural performance data on the task.
-% Find out how many trials in each block
+%Find out how many trials in each block
 % for ii = 1:length(event.rewardHistory)
-%     x(ii) = size(event.rewardHistory{ii},2)
+%     x(ii) = size(event.rewardHistory{ii},2);
 % end
-% 
+%
 % % Pull out chosen contrasts and compute absolute difference between
 % % them and the target contrasts.
 % All_alphas = nan(size(trialLog));
 % Abs_contr_diff = nan(size(trialLog));
-% for ii = 1:size(trialLog,1) %loop across blocks
-%     for jj = 1:size(trialLog,2) %loop across trials
+% for ii = 1:size(trialLog,1)                %loop across blocks
+%     for jj = 1:size(trialLog,2)            %loop across trials
 %         if ~isempty(trialLog(ii,jj).alpha) %If there's data for this trial
 %             All_alphas(ii,jj) = trialLog(ii,jj).alpha;
 %             % Work out abs difference between the TARGET and CHOSEN contrast:

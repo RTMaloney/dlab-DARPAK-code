@@ -1,56 +1,14 @@
 
+%%  ***** Now load modelling and behavioural results. *****
 
 n = 22; %we have modelling results for 22 subjects.
-
-%%
-% # import the behavioural data excel sheet 
-bh_data = importdata('C:\Users\RyanDataPC\Dropbox\DARPAK\material\Behavioural_Data.xlsx');
-
-%%
-% # Pull out just the averages for plotting. They are in row 24
-% # There are missing data for some subjects after trial 15, so we'll only plot those
-rewrd_trials = bh_data.data.TrialByTrial(24,1:15);   %# The 15 reward trials first
-instr_trials = bh_data.data.TrialByTrial(24,26:40);  %# The 15 instructive trials
-
-% # Also pull out the standard errors; they are row 25
-rewrd_trials_se = bh_data.data.TrialByTrial(25,1:15);
-instr_trials_se = bh_data.data.TrialByTrial(25,26:40); 
-
-%%
-% Now make the line plots in a new figure
-figure(1)
-mon_line = plot(rewrd_trials*100, 'r');
-hold on
-ins_line = plot(instr_trials*100, 'k');
-
-% Convert performance data into a percentage contrast when plotting
-errorbar(rewrd_trials*100, rewrd_trials_se*100, 'r', 'LineWidth', 2, 'CapSize', 0)
-errorbar(instr_trials*100, instr_trials_se*100, 'k', 'LineWidth', 2,'CapSize', 0)
-
-%Now we can insert this legend
-[~, hobj, ~, ~] = legend([mon_line ins_line],{'Monetary feedback', 'Instructive feedback'}, 'FontSize',14)
-% Make the linewidth bigger on the legend
-hl = findobj(hobj,'type','line');
-set(hl,'LineWidth',2)
-legend('boxoff')
-
-% Adjust the axis limits
-xlim([0 16])
-ylim([0 30])
-xlabel('Trial Number')
-ylabel('Choice error (% contrast)')
-
-% Final formatting:
-set(gca, 'box', 'off', 'TickDir', 'out', ...
-    'FontSize', 14)
-
-%%  ***** Now load and plot the initial modelling results. *****
 
 % These have been processed from matlab data in the try_to_unpack_bh_data_DARPAK.m script, in the form of a .mat file.
 
 % Load the mat file
 model_results = load ('C:\Users\RyanDataPC\Documents\Stefan Honours theses\DARPAK\data\behavioural\DARKPAK_proc_model_results.mat');
 
+%% Plot modelling
 % Compute mean MI across subjects for instructive condition
 MI_mean_instr = nanmean(model_results.MI.mean_instructive);
 MI_mean_monet = nanmean(model_results.MI.mean_monetary);
@@ -101,4 +59,55 @@ ylabel('Belief update magnitude (a.u.)')
 % Final formatting:
 set(gca, 'box', 'off', 'TickDir', 'out', ...
     'FontSize', 14)
+
+%% Plot the behavioural data (% choice error)
+
+figure(1)
+plot( nanmean(model_results.behav.mean_monetary(:,1:15)), 'r.-')
+hold on
+plot( nanmean(model_results.behav.mean_instructive(:,1:15)), 'k.-')
+
+%% Plot behavioural data
+
+% # Pull out just the averages for plotting. They are in row 24
+% # There are missing data for some subjects after trial 15, so we'll only plot those
+% Compute their mean across subjects
+rewrd_trials = nanmean(model_results.behav.mean_monetary(:,1:15));     %# The 15 reward trials first
+instr_trials = nanmean(model_results.behav.mean_instructive(:,1:15));  %# The 15 instructive trials
+
+% # Also pull out the standard errors; they are row 25
+rewrd_trials_se = nanstd(model_results.behav.mean_monetary(:,1:15)) / sqrt(n);
+instr_trials_se = nanstd(model_results.behav.mean_instructive(:,1:15)) / sqrt(n); 
+
+%%
+% Now make the line plots in a new figure
+figure
+mon_line = plot(rewrd_trials*100, 'r');
+hold on
+ins_line = plot(instr_trials*100, 'k');
+
+% Convert performance data into a percentage contrast when plotting
+errorbar(rewrd_trials*100, rewrd_trials_se*100, 'r', 'LineWidth', 2, 'CapSize', 0)
+errorbar(instr_trials*100, instr_trials_se*100, 'k', 'LineWidth', 2,'CapSize', 0)
+
+%Now we can insert this legend
+[~, hobj, ~, ~] = legend([mon_line ins_line],{'Monetary feedback', 'Instructive feedback'}, 'FontSize',14)
+% Make the linewidth bigger on the legend
+hl = findobj(hobj,'type','line');
+set(hl,'LineWidth',2)
+legend('boxoff')
+
+% Adjust the axis limits
+xlim([0 16])
+ylim([0 30])
+xlabel('Trial Number')
+ylabel('Choice error (% contrast)')
+% Final formatting:
+set(gca, 'box', 'off', 'TickDir', 'out', ...
+    'FontSize', 14)
+
+% Not using:
+% # import the behavioural data excel sheet 
+%bh_data = importdata('C:\Users\RyanDataPC\Dropbox\DARPAK\material\Behavioural_Data.xlsx');
+
 
