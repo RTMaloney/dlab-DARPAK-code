@@ -72,18 +72,16 @@ set(gca, 'TickDir', 'out', 'box', 'off', 'FontSize', 14) %, 'YGrid', 'on')
 
 %% try to make scalp maps:
 
-% NOTE: we need to make map limits consistent for both feedback conditions
-% for nice scalp plots.
- 
-% Load the custom colormap:
-
-load C:\Users\RyanDataPC\Documents\Stefan Honours theses\DARPAK\figures\OrnColMap.mat %
+colormap default
+cm = colormap;
+cm = [0 0 0; cm];
+close
 
 latencies = [250 550]; % latencies to measure mean within (P3a analysis window)
 
 % Pull out data for this bin:
 for c=1:ERP.nchan
-    datap(c,:) = ERP.bindata(c,:,9);
+    datap(c,:) = ERP.bindata(c,:,6);
 end
 
 % Find the indices of the values in which we're interested in analysing:
@@ -99,16 +97,13 @@ maplimit = [0 max(data2plot)]
 maplimit = [min(data2plot) max(data2plot)]
 
 
-
+maplimit = [0 max(data2plot)-min(data2plot)]
 
 
 figure
-%topoplot( data2plot, ERP.chanlocs)
-topoplot( data2plot, ERP.chanlocs,'maplimits', maplimit)
-set(gcf, 'Colormap', OrnColMap) %set the custom colormap 
-cm = colormap;
+topoplot( data2plot - min(data2plot), ERP.chanlocs,'maplimits', maplimit)
+colormap default
 colorbar
-
 
 % ,...
 %     'style', smapstyle, 'plotrad',mplotrad, 'headrad', mheadrad,'emarker', {'.','k',[],1},...
