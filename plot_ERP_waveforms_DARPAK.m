@@ -1,7 +1,14 @@
 
+% Load and plot the grand-averaged ERP waveforms, both as simple line plots
+% and as a scalp map.
 
 clear
 close all
+
+% Load custom colormap: made using colormapeditor for orientation study (see Maloney & Clifford, 2015, Neuroimage).
+% this is a modification of standard jet colormap with less saturated hot (red) end
+% and is used later for the scalp plots
+load ('C:\Users\RyanDataPC\Documents\Stefan Honours theses\DARPAK\dlab-DARPAK-code\OrnColMap.mat')
 
 %%
 %Load the grand average data:
@@ -70,52 +77,77 @@ ylim([-2 15])
 set(gca, 'TickDir', 'out', 'box', 'off', 'FontSize', 14) %, 'YGrid', 'on')
 
 
-%% try to make scalp maps:
+%% try to make scalp maps (P3a):
+
+% We are looking at bins 5 (instructive), 6 (monetary) and 9 (monetary-instructive) only
 
 % NOTE: we need to make map limits consistent for both feedback conditions
 % for nice scalp plots.
- 
-% Load the custom colormap:
-
-load C:\Users\RyanDataPC\Documents\Stefan Honours theses\DARPAK\figures\OrnColMap.mat %
+% ** ALSO: need to make sure we don't include the external electrodes: 65:68 in the plot. 
 
 latencies = [250 550]; % latencies to measure mean within (P3a analysis window)
 
+datap = [];
 % Pull out data for this bin:
-for c=1:ERP.nchan
+for c=1:64
     datap(c,:) = ERP.bindata(c,:,9);
 end
 
 % Find the indices of the values in which we're interested in analysing:
 latIndx = (ERP.times >= latencies(1) & ERP.times <= latencies(2)); 
 
-% Now compute the mean across the specified times; normalise the results by the max voltage
-data2plot = mean(datap(:,latIndx), 2) / max(mean(datap(:,latIndx), 2)) ;
 % Just plot mean
 data2plot = mean(datap(:,latIndx), 2);
 % limit of color map:
-maplimit = [0 max(data2plot)]
+maplimit = [0 max(data2plot)];
 % full range:
-maplimit = [min(data2plot) max(data2plot)]
+maplimit = [min(data2plot) max(data2plot)];
 
-
-
+maplimit = [0 12]; % for instructive and monetary plots
+maplimit = [-2 2]; % for the difference between the two
 
 
 figure
 %topoplot( data2plot, ERP.chanlocs)
 topoplot( data2plot, ERP.chanlocs,'maplimits', maplimit)
 set(gcf, 'Colormap', OrnColMap) %set the custom colormap 
-cm = colormap;
-colorbar
+colorbar('FontSize', 14, 'TickDirection', 'out')
 
-
+% other topoplot options (from pop_scalplot):
 % ,...
 %     'style', smapstyle, 'plotrad',mplotrad, 'headrad', mheadrad,'emarker', {'.','k',[],1},...
 %     'numcontour', mapnumcontour, 'maplimits', maplimit, 'colormap', clrmap,'electrodes', elestyle, 'nosedir', mapview);
 
 
-ERP = pop_scalplot( ERP,  5, [ 250 550] , 'Blc', 'none', 'Colorbar', 'on', 'Colormap', 'hsv', 'Electrodes', 'on', 'FontName', 'Courier New',...
- 'FontSize',  10, 'Legend', 'bn-la', 'Maplimit', 'absmax', 'Mapstyle', 'both', 'Maptype', '2D', 'Mapview', '+X', 'Plotrad',  0.55, 'Position',...
- [ 224.333 50.6667 791.333 514], 'Value', 'mean' );
+% ERP = pop_scalplot( ERP,  5, [ 250 550] , 'Blc', 'none', 'Colorbar', 'on', 'Colormap', 'hsv', 'Electrodes', 'on', 'FontName', 'Courier New',...
+%  'FontSize',  10, 'Legend', 'bn-la', 'Maplimit', 'absmax', 'Mapstyle', 'both', 'Maptype', '2D', 'Mapview', '+X', 'Plotrad',  0.55, 'Position',...
+%  [ 224.333 50.6667 791.333 514], 'Value', 'mean' );
 
+%% Look at LPP window 
+
+latencies = [550 900]; % latencies to measure mean within (LPP analysis window)
+
+datap=[];
+% Pull out data for this bin:
+for c=1:64
+    datap(c,:) = ERP.bindata(c,:,9);
+end
+
+% Find the indices of the values in which we're interested in analysing:
+latIndx = (ERP.times >= latencies(1) & ERP.times <= latencies(2)); 
+
+% Just plot mean
+data2plot = mean(datap(:,latIndx), 2);
+% limit of color map:
+maplimit = [0 max(data2plot)];
+% full range:
+maplimit = [min(data2plot) max(data2plot)];
+
+maplimit = [0 10] % map limit for mean instructive and monetary condtions
+%maplimit = [-2 2]; % map limit for difference map
+
+figure
+%topoplot( data2plot, ERP.chanlocs)
+topoplot( data2plot, ERP.chanlocs,'maplimits', maplimit)
+set(gcf, 'Colormap', OrnColMap) %set the custom colormap 
+colorbar('FontSize', 14, 'TickDirection', 'out')
