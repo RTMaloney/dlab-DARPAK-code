@@ -80,17 +80,22 @@ title('Mean P3a amplitudes, 250-550 ms post-feedback')
 legend('Instructive', 'Monetary') % put in legend for just the data
 
 %% Plot publication-quality bar graph of mean P3a amplitudes averaged across electrodes:
+% We will plot these to the left of the data split according to condition/electrode
+% (on the same axes). Be sure to use the same figure
 
+% Reassign values to plot:
 m = mean(plot_mean_ampl);
 se = std(plot_mean_ampl)/ sqrt(num_electrodes); % SE across electrodes
 figure
-b2(1) = bar([m(1) nan], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'k');
+% Set the points on the x-axis as -1 and 0, so the bars are to the left
+% of the collapsed data (drawn below).
+b2(1) = bar([-1 0],[m(1) nan], 'BarWidth',0.5, 'LineWidth', 2, 'FaceColor', 'k');
 hold on
-b2(2) = bar([nan m(2)], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'r');
+b2(2) = bar([-1 0],[nan m(2)], 'BarWidth',0.5, 'LineWidth', 2, 'FaceColor', 'r');
 
 % place errorbars 
-errorbar([1 2], m, se, 'k', 'linestyle', 'none', 'LineWidth', 1.5);
-xlim([0.5 2.5])
+errorbar([-1 0], m, se, 'k', 'linestyle', 'none', 'LineWidth', 2, 'CapSize', 0);
+%xlim([0.5 2.5])
 ylim([0 20])
 
 % Some formatting for the bar plot. 
@@ -99,10 +104,11 @@ set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
 
 %% Now plot P3a peak amplitudes split according to belief update size
 figure
+% reassign values to plot:
 plot_mean_ampl = [P3a_ampl_means(1,:); P3a_ampl_means(2,:); P3a_ampl_means(3,:); P3a_ampl_means(4,:)]';
 plot_SEs_ampl = [P3a_ampl_SEs(1,:); P3a_ampl_SEs(2,:); P3a_ampl_SEs(3,:); P3a_ampl_SEs(4,:)]';
 
-b1 = bar(plot_mean_ampl,'BarWidth',0.95, 'LineWidth', 1.5);
+b1 = bar(plot_mean_ampl,1, 'Grouped', 'BarWidth', 0.75, 'LineWidth', 2);
 
 % Put errorbars on the appropriate locations on the bars. This is not straightforward.
 % Find out the number of clusters along the x-axis
@@ -110,24 +116,24 @@ ngroups = size(plot_mean_ampl, 1);
 % And the number of bars per cluster
 nbars = size(plot_mean_ampl, 2);
 % Calculating the width for each bar group
-groupwidth = min(0.8, nbars/(nbars + 1.5)); % I think 0.8 is the default bar width
+groupwidth = min(1, nbars/(nbars + 1.5)); % I think 0.8 is the default bar width
 ln_cols = {'k'}; % Specify what the error bar colours should be.
 % Set the position of each error bar in the centre of the main bar
 hold on
 for ii = 1:nbars
     % Calculate center of each bar before placing error bars
     jj = [(1:ngroups) - groupwidth/2 + (2*ii-1) * groupwidth / (2*nbars)];
-    errorbar(jj, plot_mean_ampl(:,ii), plot_SEs_ampl(:,ii), ln_cols{1}, 'linestyle', 'none', 'LineWidth', 1.5);
+    errorbar(jj, plot_mean_ampl(:,ii), plot_SEs_ampl(:,ii), ln_cols{1}, 'linestyle', 'none', 'LineWidth', 2, 'CapSize',0);
 end
 
 % Set color for each bar face 
-b1(1).FaceColor = [0.5 0.5 0.5]; % Instr, small
-b1(2).FaceColor = 'k';           % Instr, large
-b1(3).FaceColor = [1 0.5 0.5];   % Monetary, small
-b1(4).FaceColor = 'r';           % Monetary, large
+b1(1).FaceColor = 'w';           % Instr, small
+b1(2).FaceColor = [0.5 0.5 0.5]; % Instr, large
+b1(3).FaceColor = [1 0 0.5];     % Monetary, small
+b1(4).FaceColor = [1 0.5 0];     % Monetary, large
 
 % publication-quality formatting:
-% set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, 'XTickLabels', {'','','','',''})
+% set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, 'XTick', [-1:5], 'XTickLabels', {'','','','','','',''})
 
 % Some formatting for the bar plot. Also put in labels on the X-axis values.
 set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
