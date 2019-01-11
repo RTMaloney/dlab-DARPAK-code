@@ -79,31 +79,8 @@ xlabel('Electrode site')
 title('Mean P3a amplitudes, 250-550 ms post-feedback')
 legend('Instructive', 'Monetary') % put in legend for just the data
 
-%% Plot publication-quality bar graph of mean P3a amplitudes averaged across electrodes:
-% We will plot these to the left of the data split according to condition/electrode
-% (on the same axes). Be sure to use the same figure
-
-% Reassign values to plot:
-m = mean(plot_mean_ampl);
-se = std(plot_mean_ampl)/ sqrt(num_electrodes); % SE across electrodes
-figure
-% Set the points on the x-axis as -1 and 0, so the bars are to the left
-% of the collapsed data (drawn below).
-b2(1) = bar([-1 0],[m(1) nan], 'BarWidth',0.5, 'LineWidth', 2, 'FaceColor', 'k');
-hold on
-b2(2) = bar([-1 0],[nan m(2)], 'BarWidth',0.5, 'LineWidth', 2, 'FaceColor', 'r');
-
-% place errorbars 
-errorbar([-1 0], m, se, 'k', 'linestyle', 'none', 'LineWidth', 2, 'CapSize', 0);
-%xlim([0.5 2.5])
-ylim([0 20])
-
-% Some formatting for the bar plot. 
-set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
-    'XTickLabels', {'',''})
-
 %% Now plot P3a peak amplitudes split according to belief update size
-figure
+%figure
 % reassign values to plot:
 plot_mean_ampl = [P3a_ampl_means(1,:); P3a_ampl_means(2,:); P3a_ampl_means(3,:); P3a_ampl_means(4,:)]';
 plot_SEs_ampl = [P3a_ampl_SEs(1,:); P3a_ampl_SEs(2,:); P3a_ampl_SEs(3,:); P3a_ampl_SEs(4,:)]';
@@ -131,9 +108,6 @@ b1(1).FaceColor = 'w';           % Instr, small
 b1(2).FaceColor = [0.5 0.5 0.5]; % Instr, large
 b1(3).FaceColor = [1 0 0.5];     % Monetary, small
 b1(4).FaceColor = [1 0.5 0];     % Monetary, large
-
-% publication-quality formatting:
-% set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, 'XTick', [-1:5], 'XTickLabels', {'','','','','','',''})
 
 % Some formatting for the bar plot. Also put in labels on the X-axis values.
 set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
@@ -250,24 +224,6 @@ ylabel ('Amplitude (uV)');
 xlabel('Electrode site')
 title('Mean LPP amplitude in 550-900 ms post-feedback')
 legend('Instructive', 'Monetary') % put in legend for just the data
-
-%% Plot publication-quality bar graph of mean LPP amplitudes averaged across electrodes:
-
-m = mean(plot_mean_ampl);
-se = std(plot_mean_ampl)/ sqrt(num_electrodes); % SE across electrodes
-figure
-b2(1) = bar([m(1) nan], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'k');
-hold on
-b2(2) = bar([nan m(2)], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'r');
-
-% place errorbars 
-errorbar([1 2], m, se, 'k', 'linestyle', 'none', 'LineWidth', 1.5);
-xlim([0.5 2.5])
-ylim([0 20])
-
-% Some formatting for the bar plot. 
-set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
-    'XTickLabels', {'',''})
 
 %% Now plot LPP mean amplitudes split according to belief update size
 figure(4)
@@ -414,24 +370,6 @@ ylabel ('Amplitude (uV)');
 xlabel('Electrode site')
 title('Mean FRN amplitude in 200-550 ms post-feedback')
 legend('Instructive', 'Monetary') % put in legend for just the data
-
-%% Plot publication-quality bar graph of mean FRN amplitudes averaged across electrodes:
-
-m = mean(plot_mean_ampl);
-se = std(plot_mean_ampl)/ sqrt(num_electrodes); % SE across electrodes
-figure
-b2(1) = bar([m(1) nan], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'k');
-hold on
-b2(2) = bar([nan m(2)], 'BarWidth',0.5, 'LineWidth', 1.5, 'FaceColor', 'r');
-
-% place errorbars 
-errorbar([1 2], m, se, 'k', 'linestyle', 'none', 'LineWidth', 1.5);
-xlim([0.5 2.5])
-ylim([0 20])
-
-% Some formatting for the bar plot. 
-set(gca, 'box', 'off', 'TickDir', 'out', 'YGrid', 'on', 'FontSize', 14, ...
-    'XTickLabels', {'',''})
 
 %% Plot FRNs split according to large/small belief update
 figure(6)
