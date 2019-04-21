@@ -149,9 +149,16 @@ for chan = 1:num_electrodes
     fprintf(chan_names{chan})
     [b(:,chan), ~, ~, ~, stats(chan,:)] = regress(d',[x1, mean_reward, mean_update_size]);
     
+    % Omit the reward predictor from the model:
+    %[b(:,chan), ~, ~, ~, stats(chan,:)] = regress(d',[x1, mean_update_size]);
+    
 end % end of loop across electrodes
 b=b';
 
+
+% *** another way to do the regression (get p-values for each regressor):
+%lm = fitlm([x1, mean_reward, mean_update_size], d(:,end), 'linear') > give t-stats for each regressor
+%anova(lm,'summary') > gives the f-test of the whole regression
 
 %% Now do LPPs amplitudes: regression with belief update size
 
@@ -223,7 +230,7 @@ IDs = [4:9, 11:14, 16:19, 21:25];
 
 %% Separate regression for each electrode: FRNs
 % bin1 = instructive, bin2 = monetary. Do bins separately
-bn = 1;
+bn = 2;
 x1 = ones(N,1); % need a column of 1s for a regression (the constant term)
 chan_names = {'CPz', 'AFz', 'Fz', 'FCz', 'Cz'};
 b =[];
