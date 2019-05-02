@@ -134,13 +134,13 @@ for chan = 1:num_electrodes
     % but remember, omit subjects 10, 15 and 20
     if bn == 1
         mean_reward = zeros(N,1); % for the instructive feedback, reward is all 0
-        mean_update_size = nanmean(model_results.entropy.mean_instructive, 2);
+        mean_update_size = nanmean(model_results.MI.mean_instructive, 2);
         mean_update_size = mean_update_size(ismember(4:25, IDs));
     elseif bn == 2
         mean_reward = nanmean(model_results.reward.mean_monetary,2); % values in dollars
         % Here, get rid of the subjects we are lacking in ERP data for.
         mean_reward = mean_reward(ismember(4:25,IDs));
-        mean_update_size = nanmean(model_results.entropy.mean_monetary, 2);
+        mean_update_size = nanmean(model_results.MI.mean_monetary, 2);
         mean_update_size = mean_update_size(ismember(4:25, IDs));
     end
     
@@ -192,13 +192,13 @@ for chan = 1:num_electrodes
     % but remember, omit subjects 10, 15 and 20
     if bn == 1
         mean_reward = zeros(N,1); % for the instructive feedback, reward is all 0
-        mean_update_size = nanmean(model_results.entropy.mean_instructive, 2);
+        mean_update_size = nanmean(model_results.MI.mean_instructive, 2);
         mean_update_size = mean_update_size(ismember(4:25, IDs));
     elseif bn == 2
         mean_reward = nanmean(model_results.reward.mean_monetary,2); % values in dollars
         % Here, get rid of the subjects we are lacking in ERP data for.
         mean_reward = mean_reward(ismember(4:25,IDs));
-        mean_update_size = nanmean(model_results.entropy.mean_monetary, 2);
+        mean_update_size = nanmean(model_results.MI.mean_monetary, 2);
         mean_update_size = mean_update_size(ismember(4:25, IDs));
     end
     
@@ -245,7 +245,7 @@ for chan = 1:num_electrodes
     % but remember, omit subjects 10, 15 and 20
     if bn == 1
         mean_reward = zeros(N,1); % for the instructive feedback, reward is all 0
-        mean_uncert = nanmean(model_results.MI.mean_instructive, 2);
+        mean_uncert = nanmean(model_results.entropy.mean_instructive, 2);
         mean_uncert = mean_uncert(ismember(4:25, IDs));
         
         d = frnAmplitude(:,5:6:end); % pull out instructive (bin 5) data only, for each electrode
@@ -254,7 +254,7 @@ for chan = 1:num_electrodes
         mean_reward = nanmean(model_results.reward.mean_monetary,2); % values in dollars
         % Here, get rid of the subjects we are lacking in ERP data for.
         mean_reward = mean_reward(ismember(4:25,IDs));
-        mean_uncert = nanmean(model_results.MI.mean_monetary, 2);
+        mean_uncert = nanmean(model_results.entropy.mean_monetary, 2);
         mean_uncert = mean_uncert(ismember(4:25, IDs));
         
         d = frnAmplitude(:,6:6:end); % pull out monetary (bin 6) data only, for each electrode
